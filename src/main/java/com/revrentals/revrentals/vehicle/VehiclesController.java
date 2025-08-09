@@ -2,7 +2,9 @@ package com.revrentals.revrentals.vehicle;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +33,7 @@ public class VehiclesController {
         VehicleList.put(vehicle.getVehicleId(),vehicle);
         System.out.println("Added vehicle:"+vehicle);
     }
+    @GetMapping("vehicle/cars")
     public void listAllCars()
     {
         for(Vehicles car:VehicleList.values())
@@ -42,29 +45,40 @@ public class VehiclesController {
             
         }
     }
-    public void listAllBikes()
+    @GetMapping("vehicle/bikes")
+    public Vehicles listAllBikes()
     {
         for(Vehicles bike:VehicleList.values())
         {
             if(bike instanceof Bike)
             {
-                System.out.println(bike);
+                return bike;
             }
             
         }
+        return null;
     }
     public void removeVehicle(String vehicleId)
     {
         VehicleList.remove(vehicleId);
     }
-    public void VehicleInfo(String vehicleId)
+    @GetMapping("/vehicle/{vehicleId}")
+    public ResponseEntity<Vehicles>  VehicleInfo(@PathVariable String vehicleId)
     {
-        if(VehicleList.get(vehicleId)!=null)
-        System.out.println(VehicleList.get(vehicleId));
+        // if(VehicleList.get(vehicleId)!=null){
+        // System.out.println(VehicleList.get(vehicleId));
+        // return VehicleList.get(vehicleId);
+        // }
+        // else
+        // return null;
+        // //System.out.println("Not Found");
+        Vehicles vehicle=VehicleList.get(vehicleId);
+        if(vehicle!=null)
+        return ResponseEntity.ok(vehicle);
         else
-        System.out.println("Not Found");
+        return ResponseEntity.notFound().build();
     }
-    @GetMapping("/vehicle/cars")
+    @GetMapping("/vehicle/cars/available")
     public Vehicles getAvailableCars()
     {
         for(Vehicles car:VehicleList.values())
